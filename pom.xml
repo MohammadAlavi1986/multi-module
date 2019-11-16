@@ -28,7 +28,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
 
@@ -79,6 +79,13 @@
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
           <version>3.7.1</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.wagon</groupId>
+              <artifactId>wagon-webdav-jackrabbit</artifactId>
+              <version>3.3.3</version>
+            </dependency>
+          </dependencies>
         </plugin>
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -124,6 +131,31 @@
 
     </plugins>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.1.1</version>
+        <reportSets>
+          <reportSet><!-- by default, id = "default" -->
+            <reports><!-- select non-aggregate reports -->
+              <report>javadoc</report>
+              <report>test-javadoc</report>
+            </reports>
+          </reportSet><!--
+          <reportSet>&lt;!&ndash; aggregate reportSet, to define in poms having modules &ndash;&gt;
+            <id>aggregate</id>
+            <inherited>false</inherited>&lt;!&ndash; don't run aggregate in child modules &ndash;&gt;
+            <reports>
+              <report>aggregate</report>
+            </reports>
+          </reportSet>-->
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <dependencyManagement>
     <dependencies>
@@ -219,6 +251,18 @@
     </dependencies>
 
   </dependencyManagement>
+  <distributionManagement>
+    <repository>
+      <id>nexus-server</id>
+      <name>nexus</name>
+      <url>http://localhost:8081/repository/maven-releases/</url>
+    </repository>
+    <site>
+      <id>nexus-server</id>
+      <name>site</name>
+      <url>dav:http://localhost:8081/repository/raw-repo/</url>
+    </site>
+  </distributionManagement>
   <profiles>
     <profile>
       <id>jacoco</id>
@@ -273,6 +317,13 @@
               <execution>
                 <id>default-restore-instrumented-classes</id>
                 <phase>post-integration-test</phase>
+                <goals>
+                  <goal>restore-instrumented-classes</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>site-restore-instrumented-classes</id>
+                <phase>post-site</phase>
                 <goals>
                   <goal>restore-instrumented-classes</goal>
                 </goals>
