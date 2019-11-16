@@ -10,6 +10,7 @@
     <postgresql.version>42.2.5</postgresql.version>
     <jacoco-version>0.8.4</jacoco-version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <powermock.version>2.0.4</powermock.version>
   </properties>
   <packaging>pom</packaging>
   <name>multi-module</name>
@@ -21,7 +22,6 @@
     <module>simple-command</module>
     <module>simple-model</module>
     <module>simple-persist</module>
-    <module>jacoco-report</module>
   </modules>
 
   <dependencies>
@@ -31,6 +31,7 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
   <build>
@@ -60,7 +61,11 @@
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
+          <version>3.2.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>3.2.3</version>
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
@@ -102,31 +107,19 @@
       </plugins>
     </pluginManagement>
     <plugins>
+
+
       <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${jacoco-version}</version>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>3.0.0-M3</version>
         <executions>
           <execution>
-            <id>default-prepare-agent</id>
             <goals>
-              <goal>prepare-agent</goal>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
             </goals>
           </execution>
         </executions>
-      </plugin>
-
-
-      <plugin>
-        <groupId>org.eluder.coveralls</groupId>
-        <artifactId>coveralls-maven-plugin</artifactId>
-        <version>4.3.0</version>
-        <configuration>
-          <jacocoReports>
-            <jacocoReport>${project.basedir}/jacoco-report/target/site/jacoco-aggregate/jacoco.xml</jacocoReport>
-          </jacocoReports>
-          <repoToken>Kh7hajSSCcQWIpVZU6TPlCsBpm6QhXkze</repoToken>
-        </configuration>
       </plugin>
 
     </plugins>
@@ -171,6 +164,26 @@
         <version>${hibernate-annotations.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-core</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-module-junit4</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-api-mockito2</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>
 
       <dependency>
         <groupId>org.mockito</groupId>
@@ -206,4 +219,84 @@
     </dependencies>
 
   </dependencyManagement>
+  <profiles>
+    <profile>
+      <id>jacoco</id>
+
+      <modules>
+        <module>jacoco-report</module>
+      </modules>
+      <dependencies>
+        <dependency>
+          <groupId>org.jacoco</groupId>
+          <artifactId>org.jacoco.agent</artifactId>
+          <version>${jacoco-version}</version>
+          <classifier>runtime</classifier>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+
+          <plugin>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>3.0.0-M3</version>
+            <configuration>
+              <systemPropertyVariables>
+                <jacoco-agent.destfile>${project.build.directory}/jacoco-it.exec
+                </jacoco-agent.destfile>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemPropertyVariables>
+                <jacoco-agent.destfile>${project.build.directory}/jacoco.exec
+                </jacoco-agent.destfile>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+
+
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco-version}</version>
+            <executions>
+              <execution>
+                <id>default-instrument</id>
+                <goals>
+                  <goal>instrument</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>default-restore-instrumented-classes</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>restore-instrumented-classes</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+
+          <plugin>
+            <groupId>org.eluder.coveralls</groupId>
+            <artifactId>coveralls-maven-plugin</artifactId>
+            <version>4.3.0</version>
+            <configuration>
+              <jacocoReports>
+                <jacocoReport>
+                  ${project.basedir}/jacoco-report/target/site/jacoco-aggregate/jacoco.xml
+                </jacocoReport>
+              </jacocoReports>
+              <repoToken>Kh7hajSSCcQWIpVZU6TPlCsBpm6QhXkze</repoToken>
+            </configuration>
+          </plugin>
+
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
