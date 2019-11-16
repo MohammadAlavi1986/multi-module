@@ -125,7 +125,7 @@
           <jacocoReports>
             <jacocoReport>${project.basedir}/jacoco-report/target/site/jacoco-aggregate/jacoco.xml</jacocoReport>
           </jacocoReports>
-          <repoToken>dqcAUNAuSy9qyBzaQ4I2Sqlg5mRignIoW70FU</repoToken>
+          <repoToken>Kh7hajSSCcQWIpVZU6TPlCsBpm6QhXkze</repoToken>
         </configuration>
       </plugin>
 
