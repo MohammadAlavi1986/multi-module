@@ -22,6 +22,27 @@ jobs:
         java-version: 1.8
     - name: Build with Maven
       run: mvn -B verify -P jacoco --file pom.xml
+
+    - name: Print the Total Coverage
+      id: coverage-percent
+      shell: bash
+      run: |
+        value=`cat jacoco-report/target/site/jacoco-aggregate/jacoco.csv | tail -n+2 | awk -F, '{missed += $8; covered += $9} END {printf "%0.2f\n", covered * 100/(missed+covered) }'`
+        echo "::set-output name=coverage::$value"
+        echo $value
+
+    - name: Add Coverage Label
+      uses: actions/github-script@v2
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          github.issues.setLabels({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            labels: ['COV: ${{steps.coverage-percent.outputs.coverage}}']
+          })
+          
     - name: Upload Jacoco coverage report
       uses: actions/upload-artifact@v2
       with:
