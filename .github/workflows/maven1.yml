@@ -18,6 +18,12 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name: Cache maven modules
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}--${{ hashFiles('**/pom.xml') }}
+
     - name: Build with Maven
       run: mvn -B verify -P jacoco --file pom.xml
 
