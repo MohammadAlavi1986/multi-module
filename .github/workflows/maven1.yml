@@ -25,7 +25,9 @@ jobs:
         key: ${{ runner.os }}--${{ hashFiles('**/pom.xml') }}
 
     - name: Build with Maven
-      run: mvn -B verify -P jacoco --file pom.xml
+      run: mvn -B deploy -P jacoco --file pom.xml
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Jacoco coverage report
       uses: actions/upload-artifact@v2
