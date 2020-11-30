@@ -251,6 +251,7 @@
     </dependencies>
 
   </dependencyManagement>
+  <!--
   <distributionManagement>
     <repository>
       <id>nexus-server</id>
@@ -263,6 +264,7 @@
       <url>dav:http://localhost:8081/repository/raw-repo/</url>
     </site>
   </distributionManagement>
+-->
   <scm>
     <connection>scm:git:https://github.com/AureaMohammadAlavi/multi-module</connection>
   </scm>
