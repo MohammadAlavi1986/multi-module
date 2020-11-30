@@ -265,6 +265,15 @@
     </site>
   </distributionManagement>
 -->
+  
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/AureaMohammadAlavi/multi-module</url>
+    </repository>
+  </distributionManagement>
+  
   <scm>
     <connection>scm:git:https://github.com/AureaMohammadAlavi/multi-module</connection>
   </scm>
